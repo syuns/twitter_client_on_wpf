@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/repos/dev2011/!svn/ver/62/Client/Client/Model/Twitter/Entities
+END
+Trend.cs
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/repos/dev2011/!svn/ver/62/Client/Client/Model/Twitter/Entities/Trend.cs
+END
+User.cs
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/repos/dev2011/!svn/ver/159/Client/Client/Model/Twitter/Entities/User.cs
+END
+TextParser.cs
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/repos/dev2011/!svn/ver/159/Client/Client/Model/Twitter/Entities/TextParser.cs
+END
+Status.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/repos/dev2011/!svn/ver/159/Client/Client/Model/Twitter/Entities/Status.cs
+END
+Location.cs
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/repos/dev2011/!svn/ver/62/Client/Client/Model/Twitter/Entities/Location.cs
+END
+MatchingTrends.cs
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/repos/dev2011/!svn/ver/62/Client/Client/Model/Twitter/Entities/MatchingTrends.cs
+END

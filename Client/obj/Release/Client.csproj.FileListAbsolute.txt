@@ -1,0 +1,153 @@
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\Client.exe.config
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\Client.exe
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\Client.pdb
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\GalaSoft.MvvmLight.dll
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.dll
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\System.Windows.Interactivity.dll
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\WPFToolkit.dll
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.xml
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\WPFToolkit.pdb
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\bin\Release\GalaSoft.MvvmLight.xml
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Skins\MainSkin.baml
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\MainWindow.g.cs
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Component\TwitterDataGrid.g.cs
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\App.g.cs
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client_MarkupCompile.cache
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client_MarkupCompile.lref
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\App.baml
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\MainWindow.baml
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Component\TwitterDataGrid.baml
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client.g.resources
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client.csproj.GenerateResource.Cache
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client.exe
+C:\Users\Admin\Documents\Visual Studio 2008\Projects\Project1\Client\Client\obj\Release\Client.pdb
+D:\sources\Projects\Client\Client\bin\Release\Client.exe.config
+D:\sources\Projects\Client\Client\obj\Release\Client.exe
+D:\sources\Projects\Client\Client\obj\Release\Client.pdb
+D:\sources\Projects\Client\Client\bin\Release\Client.exe
+D:\sources\Projects\Client\Client\bin\Release\Client.pdb
+D:\sources\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.dll
+D:\sources\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.dll
+D:\sources\Projects\Client\Client\bin\Release\System.Windows.Interactivity.dll
+D:\sources\Projects\Client\Client\bin\Release\WPFToolkit.dll
+D:\sources\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.xml
+D:\sources\Projects\Client\Client\bin\Release\WPFToolkit.pdb
+D:\sources\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.xml
+D:\sources\Projects\Client\Client\obj\Release\ResolveAssemblyReference.cache
+D:\sources\Projects\Client\Client\obj\Release\MainWindow.g.cs
+D:\sources\Projects\Client\Client\obj\Release\App.g.cs
+D:\sources\Projects\Client\Client\obj\Release\GeneratedInternalTypeHelper.g.cs
+D:\sources\Projects\Client\Client\obj\Release\Client_MarkupCompile.cache
+D:\sources\Projects\Client\Client\obj\Release\Client.Properties.Resources.resources
+D:\sources\Projects\Client\Client\obj\Release\Client.csproj.GenerateResource.Cache
+D:\sources\Projects\Client\Client\obj\Release\Skins\MainSkin.baml
+D:\sources\Projects\Client\Client\obj\Release\Client.g.resources
+C:\Users\Admin\Desktop\Client\Client\bin\Release\Client.exe.config
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client.exe
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client.pdb
+C:\Users\Admin\Desktop\Client\Client\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Skins\MainSkin.baml
+C:\Users\Admin\Desktop\Client\Client\obj\Release\MainWindow.g.cs
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Components\TwitterDataGrid.g.cs
+C:\Users\Admin\Desktop\Client\Client\obj\Release\App.g.cs
+C:\Users\Admin\Desktop\Client\Client\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client_MarkupCompile.cache
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client_MarkupCompile.lref
+C:\Users\Admin\Desktop\Client\Client\obj\Release\App.baml
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Components\TwitterDataGrid.baml
+C:\Users\Admin\Desktop\Client\Client\bin\Release\Client.exe
+C:\Users\Admin\Desktop\Client\Client\bin\Release\Client.pdb
+C:\Users\Admin\Desktop\Client\Client\bin\Release\GalaSoft.MvvmLight.dll
+C:\Users\Admin\Desktop\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.dll
+C:\Users\Admin\Desktop\Client\Client\bin\Release\System.Windows.Interactivity.dll
+C:\Users\Admin\Desktop\Client\Client\bin\Release\WPFToolkit.dll
+C:\Users\Admin\Desktop\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.xml
+C:\Users\Admin\Desktop\Client\Client\bin\Release\WPFToolkit.pdb
+C:\Users\Admin\Desktop\Client\Client\bin\Release\GalaSoft.MvvmLight.xml
+C:\Users\Admin\Desktop\Client\Client\obj\Release\MainWindow.baml
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client.g.resources
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\Admin\Desktop\Client\Client\obj\Release\Client.csproj.GenerateResource.Cache
+D:\sources\Projects\Client\Client\obj\Release\Components\TwitterDataGrid.g.cs
+D:\sources\Projects\Client\Client\obj\Release\Client_MarkupCompile.lref
+D:\sources\Projects\Client\Client\obj\Release\App.baml
+D:\sources\Projects\Client\Client\obj\Release\MainWindow.baml
+D:\sources\Projects\Client\Client\obj\Release\Components\TwitterDataGrid.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\Client.exe.config
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\Client.exe
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.dll
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.dll
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\System.Windows.Interactivity.dll
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\WPFToolkit.dll
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.xml
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\WPFToolkit.pdb
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.xml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\ResolveAssemblyReference.cache
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\ConfigurationView.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\ConfigurationView.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\MainWindow.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\TwitterDataGrid.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\App.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\GeneratedInternalTypeHelper.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client_MarkupCompile.cache
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client_MarkupCompile.lref
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\App.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\MainWindow.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Skins\MainSkin.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client.g.resources
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client.Properties.Resources.resources
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client.csproj.GenerateResource.Cache
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client.exe
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Client.pdb
+D:\documents\Visual Studio 2008\Projects\Client\Client\bin\Release\Client.pdb
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\SearchView.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\StreamView.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\OAuthView.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\OAuthView.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\HomeView.g.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\HomeView.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\SearchView.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\StreamView.baml
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\Components\TwitterDataGrid.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\bin\Release\Client.exe.config
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Client.exe
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Client.pdb
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\bin\Release\Client.exe
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\bin\Release\Client.pdb
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.xml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.xml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\ResolveAssemblyReference.cache
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\ConfigurationView.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\OAuthView.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\ConfigurationView.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\HomeView.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\OAuthView.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\SearchView.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\StreamView.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\MainWindow.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\TwitterDataGrid.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\App.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Client_MarkupCompile.cache
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Client_MarkupCompile.lref
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\App.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\HomeView.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\SearchView.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\StreamView.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\MainWindow.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Skins\MainSkin.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Components\TwitterDataGrid.baml
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Client.g.resources
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\Client.Properties.Resources.resources
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\ResGen.read.1.tlog
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\ResGen.write.1.tlog
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\GenerateResource.read.1.tlog
+C:\Users\syuns\Documents\visual studio 2010\Projects\Client\Client\obj\Release\GenerateResource.write.1.tlog
+C:\Users\syuns\Documents\Visual Studio 2010\Projects\Client\Client\bin\Release\System.Windows.Interactivity.dll
+C:\Users\syuns\Documents\Visual Studio 2010\Projects\Client\Client\obj\Release\Components\AutoCompleteTextBox.g.cs
+C:\Users\syuns\Documents\Visual Studio 2010\Projects\Client\Client\obj\Release\Components\AutoCompleteTextBox.baml
+C:\Users\syuns\Documents\Visual Studio 2010\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.dll
+C:\Users\syuns\Documents\Visual Studio 2010\Projects\Client\Client\bin\Release\GalaSoft.MvvmLight.Extras.dll

@@ -1,0 +1,18 @@
+﻿Client
+
+
+exe
+C#
+.cs
+D:\documents\Visual Studio 2008\Projects\Client\Client\obj\Release\
+Client
+none
+false
+TRACE
+D:\documents\Visual Studio 2008\Projects\Client\Client\App.xaml
+8888002297
+
+41142752141
+18395000317
+Components\ConfigurationView.xaml;Components\HomeView.xaml;Components\OAuthView.xaml;Components\SearchView.xaml;Components\StreamView.xaml;MainWindow.xaml;Skins\MainSkin.xaml;Components\TwitterDataGrid.xaml;
+

@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Client.Components.HomeView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:c="clr-namespace:Client.Components.Commands"
+	xmlns:local="clr-namespace:Client.Components"
+	Focusable="True"
+	DataContext="{Binding}">
+
+	<UserControl.CommandBindings>
+		<CommandBinding 
+			Command="{x:Static c:TwitterCommand.Refresh}"
+			Executed="Reflesh"
+			CanExecute="CanRefresh"/>
+	</UserControl.CommandBindings>
+
+	<UserControl.InputBindings>
+		<KeyBinding
+			Command="{x:Static c:TwitterCommand.Refresh}"
+			Key="F5" />
+		<MouseBinding
+			Command="{x:Static c:TwitterCommand.Refresh}" 
+			MouseAction="MiddleClick" />
+
+	</UserControl.InputBindings>
+
+	<TabControl SelectedItem="{Binding SelectedTabItem, Mode=OneWayToSource}">
+		<TabItem Header="Timeline" DataContext="{Binding Timeline, Mode=OneWay}" >
+			<local:TwitterDataGrid />
+		</TabItem>
+		<TabItem Header="Mentions" DataContext="{Binding Mentions, Mode=OneWay}">
+			<local:TwitterDataGrid />
+		</TabItem>
+		<TabItem Header="Favorites" DataContext="{Binding Favorites, Mode=OneWay}">
+			<local:TwitterDataGrid />
+		</TabItem>
+		<TabItem Header="DM" DataContext="{Binding DM, Mode=OneWay}">
+			<local:TwitterDataGrid />
+		</TabItem>
+	</TabControl>
+</UserControl>

@@ -1,0 +1,722 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Net;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Client.Component;
+using Client.Extension;
+using Client.Model.Buzztter;
+using Client.Model.Twitter;
+using Client.Model.Twitter.Api;
+using Client.Model.Twitter.Api.Rest;
+using Client.Model.Twitter.Entity;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+
+namespace Client.ViewModel {
+
+	/// <summary>
+	/// 更新方法
+	/// </summary>
+	public enum UpdateType {
+		Forward,
+		Prev,
+	}
+
+	/// <summary>
+	/// This class contains properties that the main View can data bind to.
+	/// <para>
+	/// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
+	/// </para>
+	/// <para>
+	/// You can also use Blend to data bind with the tool's support.
+	/// </para>
+	/// <para>
+	/// See http://www.galasoft.ch/mvvm/getstarted
+	/// </para>
+	/// </summary>
+	public class MainViewModel : ViewModelBase {
+
+		#region Field
+		public static readonly ICommand CommandUpdate = new RoutedCommand("UpdateCommand", typeof(MainWindow));
+		private const uint StreamQueueSize = 20;
+
+		private ICommand commandTimeline;
+		private ICommand commandSearch;
+		private ICommand commandTrend;
+		private ICommand commandBuzztter;
+		private ICommand commandStreamSample;
+		private ICommand commandStreamFilter;
+		private string timelineScreenName;
+		private string searchKeyword;
+		private string streamScreenName;
+		private string streamKeyword;
+		private string myScreenName;
+		private bool isStreamChecked;
+		private BackgroundWorker streamWorker;
+		private Func<Status, Status, bool> orderPred = (entry, item) => {
+			return entry.CreatedAt.CompareTo(item.CreatedAt) >= 0;
+		};
+		#endregion
+
+		#region Property
+		public MainWindow Main {
+			get;
+			set;
+		}
+
+		public TabItem SelectedTabItem {
+			get;
+			set;
+		}
+
+		public ObservableCollection<TabItem> TimelineTabItems {
+			get;
+			set;
+		}
+
+		public ObservableCollection<TabItem> SearchTabItems {
+			get;
+			set;
+		}
+
+		public ObservableCollection<TabItem> TrendTabItems {
+			get;
+			set;
+		}
+
+		public ObservableCollection<TabItem> BuzztterTabItems {
+			get;
+			set;
+		}
+
+		public OrderedHashSet<Status> All {
+			get;
+			set;
+		}
+
+		public OrderedHashSet<Status> Stream {
+			get;
+			set;
+		}
+
+		public ICommand CommandTimeline {
+			get {
+				return commandTimeline
+					?? (commandTimeline = new RelayCommand<string[]>(TimelineExecute));
+			}
+		}
+
+		public ICommand CommandSearch {
+			get {
+				return commandSearch
+					?? (commandSearch = new RelayCommand<string[]>(SearchExecute));
+			}
+		}
+
+		public ICommand CommandTrend {
+			get {
+				return commandTrend
+					?? (commandTrend = new RelayCommand<string[]>(TrendExecute));
+			}
+		}
+
+		public ICommand CommandBuzztter {
+			get {
+				return commandBuzztter
+					?? (commandBuzztter = new RelayCommand<string[]>(BuzztterExecute));
+			}
+		}
+
+		public ICommand CommandStreamSample {
+			get {
+				return commandStreamSample
+					?? (commandStreamSample = new RelayCommand(StreamSampleExecute));
+			}
+		}
+
+		public ICommand CommandStreamFilter {
+			get {
+				return commandStreamFilter
+					?? (commandStreamFilter = new RelayCommand(StreamFilterExecute));
+			}
+		}
+
+		public PasswordBox PasswordBox {
+			get;
+			set;
+		}
+
+		public string TimelineScreenName {
+			get {
+				return timelineScreenName;
+			}
+			set {
+				ArrangeTabItems(TimelineScreenName.SplitByLineOrComma(), value.SplitByLineOrComma(), TimelineTabItems);
+				timelineScreenName = value;
+				Properties.Settings.Default.SettingTimelineScreenName = value;
+				this.RaisePropertyChanged("TimelineScreenName");
+			}
+		}
+
+		public string SearchKeyword {
+			get {
+				return searchKeyword;
+			}
+			set {
+				ArrangeTabItems(SearchKeyword.SplitByLineOrComma(), value.SplitByLineOrComma(), SearchTabItems);
+				searchKeyword = value;
+				Properties.Settings.Default.SettingSearchKeyword = value;
+				this.RaisePropertyChanged("SearchKeyword");
+			}
+		}
+
+		public string StreamScreenName {
+			get {
+				return streamScreenName;
+			}
+			set {
+				streamScreenName = value;
+				Properties.Settings.Default.SettingStreamScreenName = value;
+				this.RaisePropertyChanged("StreamScreenName");
+			}
+		}
+
+		public string StreamKeyword {
+			get {
+				return streamKeyword;
+			}
+			set {
+				streamKeyword = value;
+				Properties.Settings.Default.SettingStreamKeyword = value;
+				this.RaisePropertyChanged("StreamKeyword");
+			}
+		}
+
+		public string MyScreenName {
+			get {
+				return myScreenName;
+			}
+			set {
+				myScreenName = value;
+				Properties.Settings.Default.SettingMyScreenName = value;
+				this.RaisePropertyChanged("MyScreenName");
+			}
+		}
+
+		public string[] OldBuzztterWords {
+			get;
+			set;
+		}
+
+		public string[] OldTrendWords {
+			get;
+			set;
+		}
+
+		public bool IsStreamChecked {
+			get {
+				return isStreamChecked;
+			}
+			set {
+				isStreamChecked = value;
+				this.RaisePropertyChanged("IsStreamChecked");
+			}
+		}
+		#endregion
+
+		#region Constructor
+		public MainViewModel() {
+			TimelineTabItems = new ObservableCollection<TabItem>();
+			SearchTabItems = new ObservableCollection<TabItem>();
+			TrendTabItems = new ObservableCollection<TabItem>();
+			BuzztterTabItems = new ObservableCollection<TabItem>();
+			All = new OrderedHashSet<Status>();
+			Stream = new OrderedHashSet<Status>();
+
+			TimelineTabItems.Add(new TabItem {
+				Header = "All",
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>()
+			});
+			SearchTabItems.Add(new TabItem {
+				Header = "All",
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>()
+			});
+			TrendTabItems.Add(new TabItem {
+				Header = "All",
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>()
+			});
+			BuzztterTabItems.Add(new TabItem {
+				Header = "All",
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>()
+			});
+
+			LoadSettings();
+		}
+		#endregion
+
+		#region Method
+		public override void Cleanup() {
+			Properties.Settings.Default.Save();
+			base.Cleanup();
+		}
+
+		private void LoadSettings() {
+			TimelineScreenName = Properties.Settings.Default.SettingTimelineScreenName;
+			SearchKeyword = Properties.Settings.Default.SettingSearchKeyword;
+			StreamScreenName = Properties.Settings.Default.SettingStreamScreenName;
+			StreamKeyword = Properties.Settings.Default.SettingStreamKeyword;
+			MyScreenName = Properties.Settings.Default.SettingMyScreenName;
+		}
+
+		private void InsertTabItem(Status entry, ObservableCollection<TabItem> to, string tabName) {
+			Dispatch.Method(() => {
+				if (to == TimelineTabItems || to == SearchTabItems || to == TrendTabItems || to == BuzztterTabItems) {
+					if (entry != null) {
+						var all = to[0].DataContext as OrderedHashSet<Status>;
+						all.Insert(entry, orderPred);
+					}
+				}
+
+				TabItem existsTabItem = null;
+				foreach (TabItem tabItem in to) {
+					if (tabItem.Header.ToString() == tabName) {
+						existsTabItem = tabItem;
+						break;
+					}
+				}
+
+				if (existsTabItem == null) {
+					var collection = new OrderedHashSet<Status>();
+					if (entry != null) {
+						collection.Add(entry);
+					}
+					var newTabItem = new TabItem {
+						Header = tabName,
+						Content = new TwitterDataGrid(),
+						DataContext = collection,
+					};
+					to.Add(newTabItem);
+				} else {
+					var collection = existsTabItem.DataContext as OrderedHashSet<Status>;
+					if (entry != null && collection != null) {
+						collection.Insert(entry, orderPred);
+					}
+				}
+			});
+		}
+
+		private void RemoveTabItem(ObservableCollection<TabItem> from, string tabName) {
+			Dispatch.Method(() => {
+				foreach (TabItem tabItem in from) {
+					if (tabItem.Header.ToString() == tabName) {
+						var removedCollection = tabItem.DataContext as ObservableCollection<Status>;
+						var all = from[0].DataContext as ObservableCollection<Status>;
+						foreach (Status entry in removedCollection) {
+							all.Remove(entry);
+							All.Remove(entry);
+						}
+						from.Remove(tabItem);
+						break;
+					}
+				}
+			});
+		}
+
+		private void ArrangeTabItems(string[] olds, string[] news, ObservableCollection<TabItem> tabItems) {
+			if (olds != null && news != null) {
+				foreach (string newTabName in news.Except(olds))
+					InsertTabItem(null, tabItems, newTabName);
+				foreach (string removeTabName in olds.Except(news))
+					RemoveTabItem(tabItems, removeTabName);
+			} else if (news != null) {
+				foreach (string newTabName in news)
+					InsertTabItem(null, tabItems, newTabName);
+			}
+		}
+		#endregion
+
+		#region Command
+		private void TimelineExecute(params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			var worker = new BackgroundWorker();
+			worker.DoWork += (s, e) => {
+				Main.WorkerCounter++;
+				foreach (Status entry in Statuses.UserTimeline(Format.Xml, options)) {
+					InsertTabItem(entry, TimelineTabItems, entry.User.ScreenName);
+					All.Insert(entry, orderPred);
+				}
+			};
+			worker.RunWorkerCompleted += (s, e) => {
+				Main.WorkerCounter--;
+			};
+			worker.RunWorkerAsync();
+		}
+
+		private void SearchExecute(params string[] options) {
+			if (options == null || string.IsNullOrEmpty(SearchKeyword)) {
+				return;
+			}
+
+			string[] keywords = SearchKeyword.SplitByLineOrComma();
+			foreach (string keyword in keywords) {
+				InsertTabItem(null, SearchTabItems, keyword);
+			}
+
+			var worker = new BackgroundWorker();
+			worker.DoWork += (s, e) => {
+				Main.WorkerCounter++;
+				foreach (Status entry in Search.Execute(Format.Atom, options)) {
+					foreach (string keyword in keywords) {
+						string[] andSplited = keyword.Split(' ');
+						if (andSplited.Length >= 2) {
+							// And
+							int i;
+							for (i = 0; i < andSplited.Length && entry.Text.Contains(andSplited[i]); i++)
+								;
+							if (andSplited.Length == i) {
+								InsertTabItem(entry, SearchTabItems, keyword);
+								All.Insert(entry, orderPred);
+							}
+						} else {
+							// キーワード単体
+							if (entry.Text.Contains(keyword)) {
+								InsertTabItem(entry, SearchTabItems, keyword);
+								All.Insert(entry, orderPred);
+							}
+						}
+					}
+				}
+			};
+			worker.RunWorkerCompleted += (s, e) => {
+				Main.WorkerCounter--;
+			};
+			worker.RunWorkerAsync();
+		}
+
+		private void TrendExecute(params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			string woeid = null;
+			string qWord = null;
+			List<string> optionList = options.ToList();
+			foreach (string value in optionList) {
+				int woeidIndex = value.IndexOf("woeid=");
+				if (woeidIndex != -1) {
+					woeid = value.Substring("woeid=".Length);
+				}
+
+				int wordIndex = value.IndexOf("q=");
+				if (wordIndex != -1) {
+					qWord = value.Substring("q=".Length);
+				}
+			}
+
+			var worker = new BackgroundWorker();
+			if (woeid == null) {
+				// 単語検索
+				worker.DoWork += (s, e) => {
+					Main.WorkerCounter++;
+
+					foreach (var entry in Search.Execute(Format.Atom, optionList.ToArray())) {
+						InsertTabItem(entry, TrendTabItems, qWord);
+						All.Insert(entry, orderPred);
+					}
+				};
+			} else {
+				optionList.Remove("woeid=" + woeid);
+				// Trend検索
+				worker.DoWork += (s, e) => {
+					Main.WorkerCounter++;
+
+					MatchingTrends trends = Trends.Woeid(Format.Json, woeid);
+					ArrangeTabItems(OldTrendWords, trends.Hotwords, TrendTabItems);
+					foreach (string keyword in trends.Hotwords) {
+						InsertTabItem(null, TrendTabItems, keyword);
+					}
+
+					optionList.Add("q=" + Search.FormatQ(trends.Hotwords));
+					foreach (Status entry in Search.Execute(Format.Atom, optionList.ToArray())) {
+						foreach (string keyword in trends.Hotwords) {
+							if (entry.Text.Contains(keyword)) {
+								InsertTabItem(entry, TrendTabItems, keyword);
+								All.Insert(entry, orderPred);
+								break;
+							}
+						}
+					}
+					OldTrendWords = trends.Hotwords;
+				};
+			}
+			worker.RunWorkerCompleted += (s, e) => {
+				Main.WorkerCounter--;
+			};
+			worker.RunWorkerAsync();
+		}
+
+		private void BuzztterExecute(params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			string qWord = null;
+			if (options != null) {
+				string searchWord = "q=";
+				foreach (string option in options) {
+					int index = option.IndexOf(searchWord);
+					if (index != -1) {
+						qWord = option.Substring(index + searchWord.Length);
+						break;
+					}
+				}
+			}
+
+			var worker = new BackgroundWorker();
+			if (qWord == null) {
+				// q=を含まない場合
+				worker.DoWork += (s, e) => {
+					Main.WorkerCounter++;
+					var optionList = options.ToList();
+					string[] hotwords = BuzztterFeed.GetHotWords();
+					optionList.Add("q=" + Search.FormatQ(hotwords));
+
+					if (hotwords != null) {
+						ArrangeTabItems(OldBuzztterWords, hotwords, BuzztterTabItems);
+						foreach (string keyword in hotwords) {
+							InsertTabItem(null, BuzztterTabItems, keyword);
+						}
+
+						foreach (Status entry in Search.Execute(Format.Atom, optionList.ToArray())) {
+							foreach (string keyword in hotwords) {
+								if (entry.Text.Contains(keyword)) {
+									InsertTabItem(entry, BuzztterTabItems, keyword);
+									All.Insert(entry, orderPred);
+									break;
+								}
+							}
+						}
+						OldBuzztterWords = hotwords;
+					}
+				};
+			} else {
+				// q=を含む場合
+				worker.DoWork += (s, e) => {
+					Main.WorkerCounter++;
+					foreach (var entry in Search.Execute(Format.Atom, options)) {
+						InsertTabItem(entry, BuzztterTabItems, qWord);
+						All.Insert(entry, orderPred);
+					}
+				};
+			}
+			worker.RunWorkerCompleted += (s, e) => {
+				Main.WorkerCounter--;
+			};
+			worker.RunWorkerAsync();
+		}
+
+		private void StreamFilterExecute() {
+			// オプションチェック
+			var options = new List<string>();
+			var idList = new List<string>();
+			foreach (string screenName in StreamScreenName.SplitByLineOrComma()) {
+				try {
+					idList.Add(Users.Show(Format.Xml, "id=" + screenName).Id);
+				} catch {
+					// do nothing
+				}
+			}
+			if (idList.Count > 0) {
+				options.Add("follow=" + Streaming.FormatFollowOrTrack(idList.ToArray()));
+			}
+			string[] streamKeywords = StreamKeyword.SplitByLineOrComma();
+			if (streamKeywords.Length > 0) {
+				options.Add("track=" + Streaming.FormatFollowOrTrack(streamKeywords));
+			}
+			string option;
+			if (options.Count > 0) {
+				option = Utility.GetOption(options.ToArray());
+			} else {
+				IsStreamChecked = false;
+				return;
+			}
+
+			streamWorker = new BackgroundWorker();
+			streamWorker.DoWork += (s, e) => {
+				IsStreamChecked = true;
+				Streaming.RunStreamFilter(
+					new NetworkCredential {
+						UserName = MyScreenName,
+						Password = PasswordBox.SecurePassword.SecureStringToString(),
+					},
+					entry => {
+						Stream.Insert(entry, orderPred);
+						if (Stream.Count > StreamQueueSize) {
+							Stream.RemoveAt(Stream.Count - 1);
+						}
+					},
+					entry => Stream.Remove(entry),
+					() => IsStreamChecked,
+					option
+				 );
+			};
+			streamWorker.RunWorkerCompleted += (s, e) => {
+				IsStreamChecked = false;
+			};
+			streamWorker.RunWorkerAsync();
+		}
+
+		private void StreamSampleExecute() {
+			var worker = new BackgroundWorker();
+			worker.DoWork += (s, e) => {
+				IsStreamChecked = true;
+				Streaming.RunStreamSample(
+					new NetworkCredential {
+						UserName = MyScreenName,
+						Password = PasswordBox.SecurePassword.SecureStringToString(),
+					},
+					entry => {
+						Stream.Insert(entry, orderPred);
+						if (Stream.Count > StreamQueueSize) {
+							Stream.RemoveAt(Stream.Count - 1);
+						}
+					},
+					entry => Stream.Remove(entry),
+					() => IsStreamChecked
+				);
+			};
+			worker.DoWork += (s, e) => {
+				IsStreamChecked = false;
+			};
+			worker.RunWorkerAsync();
+		}
+
+		public void UpdateExecute(object sender, ExecutedRoutedEventArgs e) {
+			var kv = e.Parameter as Dictionary<UpdateType, Status>;
+
+			Console.WriteLine(sender);
+			Console.WriteLine(e);
+			var selected = SelectedTabItem;
+
+			if (SelectedTabItem.Content is TwitterDataGrid) {
+				// 全て実行
+				var dataContent = (SelectedTabItem.Content as TwitterDataGrid).DataContext as ObservableCollection<Status>;
+				if (dataContent == All) {
+					SearchExecute(new string[] { "q=" + Search.FormatQ(SearchKeyword.SplitByLineOrComma()), "rpp=100" });
+					foreach (string screenName in TimelineScreenName.SplitByLineOrComma()) {
+						TimelineExecute(new string[] { "screen_name=" + screenName, "include_rts=1" });
+					}
+					TrendExecute("woeid=23424856");
+					BuzztterExecute("rpp=100");
+				}
+			} else if (SelectedTabItem.Content is TabControl) {
+				var tabControl = SelectedTabItem.Content as TabControl;
+				if (tabControl != null) {
+					var childHeader = (tabControl.SelectedItem as TabItem).Header.ToString();
+					var source = tabControl.ItemsSource as ObservableCollection<TabItem>;
+
+					// 選択タブに応じて実行
+					if (source == TimelineTabItems) {
+						// Timeline
+						var options = new List<string>();
+
+						options.AddRange(new string[] { "include_rts=1", "count=100" });
+						if (kv != null) {
+							if (kv.Keys.Contains(UpdateType.Forward)) {
+								options.Add("since_id=" + kv[UpdateType.Forward].Id);
+							} else if (kv.Keys.Contains(UpdateType.Prev)) {
+								options.Add("max_id=" + kv[UpdateType.Prev].Id);
+							}
+						}
+						if (childHeader == "All") {
+							foreach (string screenName in TimelineScreenName.SplitByLineOrComma()) {
+								string screen = "screen_name=" + screenName;
+								options.Add(screen);
+								TimelineExecute(options.ToArray());
+								options.Remove(screen);
+							}
+						} else {
+							options.Add("screen_name=" + childHeader);
+							TimelineExecute(options.ToArray());
+						}
+					} else if (source == SearchTabItems) {
+						// Search
+						var options = new List<string>();
+
+//						options.AddRange(new string[] { "lang=ja", "rpp=100" });
+						options.Add("rpp=100");
+						if (kv != null) {
+							if (kv.Keys.Contains(UpdateType.Forward)) {
+								options.Add("since_id=" + kv[UpdateType.Forward].Id);
+							} else if (kv.Keys.Contains(UpdateType.Prev)) {
+								options.Add("max_id=" + kv[UpdateType.Prev].Id);
+							}
+						}
+						if (childHeader == "All") {
+							options.Add("q=" + Search.FormatQ(SearchKeyword.SplitByLineOrComma()));
+						} else {
+							options.Add("q=" + childHeader);
+						}
+
+						SearchExecute(options.ToArray());
+					} else if (source == TrendTabItems) {
+						// Trend
+						var options = new List<string>();
+
+//						options.AddRange(new string[] { "lang=ja", "rpp=100" });
+						//options.Add("lang=ja");
+						//options.Add("rpp=100");
+						options.Add("rpp=100");
+						if (kv != null) {
+							if (kv.Keys.Contains(UpdateType.Forward)) {
+								options.Add("since_id=" + kv[UpdateType.Forward].Id);
+							} else if (kv.Keys.Contains(UpdateType.Prev)) {
+								options.Add("max_id=" + kv[UpdateType.Prev].Id);
+							}
+						}
+
+						if (childHeader == "All") {
+							options.Add("woeid=23424856");
+						} else {
+							options.Add("q=" + childHeader);
+						}
+
+						TrendExecute(options.ToArray());
+					} else if (source == BuzztterTabItems) {
+						// Buzztter
+						var options = new List<string>();
+
+//						options.AddRange(new string[] { "lang=ja", "rpp=100" });
+						options.Add("rpp=100");
+						if (kv != null) {
+							if (kv.Keys.Contains(UpdateType.Forward)) {
+								options.Add("since_id=" + kv[UpdateType.Forward].Id);
+							} else if (kv.Keys.Contains(UpdateType.Prev)) {
+								options.Add("max_id=" + kv[UpdateType.Prev].Id);
+							}
+						}
+						if (childHeader != "All") {
+							options.Add("q=" + childHeader);
+						}
+
+						BuzztterExecute(options.ToArray());
+					}
+				}
+			}
+		}
+		#endregion
+
+	}
+
+}

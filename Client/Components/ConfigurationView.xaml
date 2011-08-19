@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Client.Components.ConfigurationView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:Client.Components"
+	DataContext="{Binding}">
+
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../Skins/MainSkin.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<StackPanel Orientation="Horizontal">
+		<GroupBox Header="Search">
+			<StackPanel Orientation="Horizontal">
+				<Label Content="User:"
+					VerticalAlignment="Center" />
+				<TextBox Text="{Binding TimelineScreenName, Mode=TwoWay}"
+					Style="{StaticResource textBoxStyle1}" />
+				<Label Content="Query:"
+					VerticalAlignment="Center" />
+				<TextBox Text="{Binding SearchQuery, Mode=TwoWay}"
+					Style="{StaticResource textBoxStyle1}" />
+			</StackPanel>
+		</GroupBox>
+		<Separator Style="{StaticResource separatorStyle1}" />
+
+		<DockPanel>
+			<Button DockPanel.Dock="Top" Content="Authorize/Reset" Command="{Binding ShowOAuthView}" Margin="10" />
+			<GroupBox Header="Streaming">
+				<DockPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="User:" VerticalAlignment="Center" />
+						<TextBox Text="{Binding StreamScreenName, Mode=TwoWay}" Style="{StaticResource textBoxStyle1}" />
+						<Label Content="Keyword:" VerticalAlignment="Center" />
+						<TextBox Text="{Binding StreamKeyword, Mode=TwoWay}" Style="{StaticResource textBoxStyle1}" />
+					</StackPanel>
+				</DockPanel>
+			</GroupBox>
+		</DockPanel>
+	</StackPanel>
+</UserControl>

@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/repos/dev2011/!svn/ver/62/Client/Client/Extension
+END
+Extensions.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/repos/dev2011/!svn/ver/159/Client/Client/Extension/Extensions.cs
+END
+Dispatch.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/repos/dev2011/!svn/ver/78/Client/Client/Extension/Dispatch.cs
+END
+OrderedHashSet.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/repos/dev2011/!svn/ver/159/Client/Client/Extension/OrderedHashSet.cs
+END

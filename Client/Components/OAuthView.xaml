@@ -1,0 +1,22 @@
+﻿<Window x:Class="Client.Components.OAuthView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="OAuthView"
+	Height="74" Width="492"
+	ResizeMode="NoResize"
+	WindowStyle="ToolWindow"
+	DataContext="{Binding}">
+
+	<StackPanel Orientation="Horizontal" Width="457" Height="30">
+		<Button Content="Get PIN" Command="{Binding OpenAuthorizePageCommand}" Width="60" />
+		<Label VerticalAlignment="Center" Content="PIN:" />
+		<TextBox x:Name="textBoxPIN" Width="200" />
+		<Button Content="Authorize"
+				Command="{Binding AOuthSaveCommand}"
+				CommandParameter="{Binding Text, ElementName=textBoxPIN}"
+				Width="80" />
+		<Button Content="Reset"
+				Command="{Binding AOuthResetCommand}"
+				Width="80" />
+	</StackPanel>
+</Window>

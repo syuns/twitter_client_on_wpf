@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/repos/dev2011/!svn/ver/78/Client/Client/Components/Datas
+END
+TwitterDataGridViewModel.cs
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/repos/dev2011/!svn/ver/106/Client/Client/Components/Datas/TwitterDataGridViewModel.cs
+END
+SearchViewModel.cs
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/repos/dev2011/!svn/ver/160/Client/Client/Components/Datas/SearchViewModel.cs
+END
+ConfigurationViewModel.cs
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/repos/dev2011/!svn/ver/160/Client/Client/Components/Datas/ConfigurationViewModel.cs
+END
+HomeViewModel.cs
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/repos/dev2011/!svn/ver/160/Client/Client/Components/Datas/HomeViewModel.cs
+END
+StreamViewModel.cs
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/repos/dev2011/!svn/ver/160/Client/Client/Components/Datas/StreamViewModel.cs
+END

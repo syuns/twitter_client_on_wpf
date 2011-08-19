@@ -1,0 +1,150 @@
+﻿<Window x:Class="Client.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:Client.Components"
+	xmlns:c="clr-namespace:Client.Components.Commands"
+	Height="480" Width="660"
+	Title="Client"
+	DataContext="{Binding Main, Source={StaticResource Locator}}"
+	Loaded="SelectHomeViewTab">
+
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Skins/MainSkin.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+
+	<Window.InputBindings>
+		<KeyBinding
+			Command="{x:Static c:TwitterCommand.Refresh}"
+			Key="F5" />
+		<MouseBinding
+			Command="{x:Static c:TwitterCommand.Refresh}"
+			MouseAction="MiddleClick" />
+	</Window.InputBindings>
+
+	<DockPanel x:Name="LayoutRoot" LastChildFill="True">
+		<ToolBar DockPanel.Dock="Top">
+			<ToolBar.Resources>
+				<Style x:Key="Disable" TargetType="{x:Type Button}">
+					<Style.Triggers>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Background" Value="Silver" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+				<Style x:Key="FavoriteButton" TargetType="{x:Type ToggleButton}">
+					<Style.Triggers>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Background" Value="Silver" />
+						</Trigger>
+					</Style.Triggers>
+				</Style>
+				<Style TargetType="{x:Type Image}">
+					<Setter Property="Width" Value="16" />
+					<Setter Property="Height" Value="16" />
+				</Style>
+			</ToolBar.Resources>
+
+			<Button Click="SelectHomeViewTab">
+				<Image Source="/Resources/home.png" />
+			</Button>
+			<Button Click="SelectSearchViewTab">
+				<Image Source="/Resources/magnifier-zoom.png" />
+			</Button>
+			<Button Command="{x:Static c:TwitterCommand.Refresh}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/arrow-circle-double-135.png" />
+			</Button>
+			<Button Command="{Binding MASearchZoomInCommand}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/magnifier-zoom-in.png" />
+			</Button>
+			<Button Command="{Binding MASearchZoomOutCommand}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/magnifier-zoom-out.png" />
+			</Button>
+
+			<Separator />
+
+			<Button Click="SelectStreamViewTab">
+				<Image Source="/Resources/databases-relation.png" />
+			</Button>
+			<ToggleButton Command="{Binding Stream.ConnectUserStreamsCommand}"
+				Style="{StaticResource FavoriteButton}"
+				IsChecked="{Binding Configuration.IsStreamChecked, Mode=TwoWay}">
+				<Image Source="/Resources/control.png" />
+			</ToggleButton>
+
+			<Separator />
+
+			<Button Command="{Binding UpdateCommand}" CommandParameter="{Binding Text, ElementName=textBoxStatus}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/pencil.png" />
+			</Button>
+			<Button Command="{Binding ReplyCommand}" CommandParameter="{Binding Text, ElementName=textBoxStatus}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/arrow-return-000-left.png" />
+			</Button>
+			<Button Command="{Binding RetweetCommand}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/arrow-repeat.png" />
+			</Button>
+			<Button Command="{Binding DestroyCommand}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/cross.png" />
+			</Button>
+			<ToggleButton Command="{Binding FavoritesChangeCommand}"
+				Style="{StaticResource FavoriteButton}"
+				IsChecked="{Binding Path=SelectedStatus.Favorited, Source={x:Static local:TwitterDataGrid.StaticViewModel}}">
+				<Image Source="/Resources/star.png" />
+			</ToggleButton>
+			<Button Command="{Binding ShowReplyCommand}"
+				Style="{StaticResource Disable}">
+				<Image Source="/Resources/balloon-white.png" />
+			</Button>
+
+			<Separator />
+
+			<Button Click="SelectConfigViewTab">
+				<Image Source="/Resources/gear.png" />
+			</Button>
+		</ToolBar>
+
+		<Grid DockPanel.Dock="Top">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="50" />
+			</Grid.ColumnDefinitions>
+			<local:AutoCompleteTextBox x:Name="textBoxStatus"
+				Grid.Column="0" />
+			<Label HorizontalAlignment="Center" Grid.Column="1"
+				Content="{Binding Text.Length, ElementName=textBoxStatus, Mode=OneWay, Converter={StaticResource LengthConverter}}" />
+		</Grid>
+
+		<TabControl x:Name="tabControl">
+			<TabControl.Resources>
+				<Style x:Key="noHeader" TargetType="{x:Type TabItem}">
+					<Setter Property="Height" Value="0" />
+				</Style>
+			</TabControl.Resources>
+
+			<TabItem Header="Home" Style="{StaticResource noHeader}">
+				<local:HomeView x:Name="homeView" />
+			</TabItem>
+			<TabItem Header="Search" Style="{StaticResource noHeader}">
+				<local:SearchView x:Name="searchView" />
+			</TabItem>
+			<TabItem Header="Streaming" Style="{StaticResource noHeader}">
+				<local:StreamView x:Name="streamView" />
+			</TabItem>
+			<TabItem Header="Config" Style="{StaticResource noHeader}">
+				<local:ConfigurationView x:Name="configView" />
+			</TabItem>
+		</TabControl>
+	</DockPanel>
+</Window>

@@ -1,0 +1,485 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Client.Extension;
+using Client.Model.Buzztter;
+using Client.Model.Twitter;
+using Client.Model.Twitter.Api;
+using Client.Model.Twitter.Api.Rest;
+using Client.Model.Twitter.Entities;
+using Client.Model.Yahoo.Api.Rest;
+using Client.Model.Yahoo.Entities;
+using GalaSoft.MvvmLight;
+
+namespace Client.Components.ViewModel {
+
+	/// <summary>
+	/// 更新方法
+	/// </summary>
+	public enum UpdateType {
+		Forward,
+		Prev,
+	}
+
+	public class SearchViewModel : ViewModelBase {
+
+		#region Field
+		private readonly string FirstHeaderName;
+		#endregion
+
+		#region Property
+		public MainWindow Main {
+			private get;
+			set;
+		}
+
+		public ConfigurationViewModel Configuration {
+			get;
+			set;
+		}
+
+		public TabItem SelectedTabItem {
+			private get;
+			set;
+		}
+
+		private Func<Status, Status, bool> OrderPred {
+			get;
+			set;
+		}
+
+		public ObservableCollection<TabItem> UserTabItems {
+			get;
+			private set;
+		}
+
+		public ObservableCollection<TabItem> QueryTabItems {
+			get;
+			private set;
+		}
+
+		public ObservableCollection<TabItem> MASearchTabItems {
+			get;
+			private set;
+		}
+
+		public ObservableCollection<TabItem> TrendTabItems {
+			get;
+			private set;
+		}
+
+		public ObservableCollection<TabItem> BuzztterTabItems {
+			get;
+			private set;
+		}
+
+		private string[] OldBuzztterWords {
+			get;
+			set;
+		}
+
+		private string[] OldTrendWords {
+			get;
+			set;
+		}
+		#endregion
+
+		#region Constructor
+		public SearchViewModel(MainWindow main, ConfigurationViewModel configuration) {
+			Main = main;
+			Configuration = configuration;
+
+			UserTabItems = new ObservableCollection<TabItem>();
+			QueryTabItems = new ObservableCollection<TabItem>();
+			MASearchTabItems = new ObservableCollection<TabItem>();
+			TrendTabItems = new ObservableCollection<TabItem>();
+			BuzztterTabItems = new ObservableCollection<TabItem>();
+
+			FirstHeaderName = "All";
+			OrderPred = (entry, item) => {
+				return entry.CreatedAt.CompareTo(item.CreatedAt) >= 0;
+			};
+
+			UserTabItems.Add(new TabItem {
+				Header = FirstHeaderName,
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>(OrderPred)
+			});
+			QueryTabItems.Add(new TabItem {
+				Header = FirstHeaderName,
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>(OrderPred)
+			});
+			MASearchTabItems.Add(new TabItem {
+				Header = "",
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>(OrderPred)
+			});
+			TrendTabItems.Add(new TabItem {
+				Header = FirstHeaderName,
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>(OrderPred)
+			});
+			BuzztterTabItems.Add(new TabItem {
+				Header = FirstHeaderName,
+				Content = new TwitterDataGrid(),
+				DataContext = new OrderedHashSet<Status>(OrderPred)
+			});
+		}
+		#endregion
+
+		#region Method
+		private void InsertTabItem(Status entry, ObservableCollection<TabItem> to, string tabName) {
+			Dispatch.Method(() => {
+				if (entry != null && (to == UserTabItems || to == QueryTabItems || to == TrendTabItems || to == BuzztterTabItems)) {
+					var all = to[0].DataContext as OrderedHashSet<Status>;
+					all.Insert(entry);
+				}
+
+				TabItem found = null;
+				foreach (TabItem tabItem in to) {
+					if (tabItem.Header.ToString() == tabName) {
+						found = tabItem;
+						break;
+					}
+				}
+
+				OrderedHashSet<Status> statuses;
+				if (found == null) {
+					statuses = new OrderedHashSet<Status>(OrderPred);
+					to.Add(new TabItem {
+						Header = tabName,
+						Content = new TwitterDataGrid(),
+						DataContext = statuses,
+					});
+				} else {
+					statuses = found.DataContext as OrderedHashSet<Status>;
+				}
+				if (entry != null && statuses != null) {
+					statuses.Insert(entry);
+				}
+			});
+		}
+
+		private void RemoveTabItem(ObservableCollection<TabItem> from, string tabName) {
+			Dispatch.Method(() => {
+				foreach (TabItem tabItem in from) {
+					string header = tabItem.Header.ToString();
+					if (header != FirstHeaderName && header == tabName) {
+						var statuses = tabItem.DataContext as OrderedHashSet<Status>;
+						var all = from[0].DataContext as OrderedHashSet<Status>;
+						all.RemoveRange(statuses);
+						statuses.Clear();
+						from.Remove(tabItem);
+						break;
+					}
+				}
+			});
+		}
+
+		public void ArrangeTabItems(string[] olds, string[] news, ObservableCollection<TabItem> tabItems) {
+			if (olds != null && news != null) {
+				foreach (string newTabName in news.Except(olds))
+					InsertTabItem(null, tabItems, newTabName);
+				foreach (string removeTabName in olds.Except(news))
+					RemoveTabItem(tabItems, removeTabName);
+			} else if (news != null) {
+				foreach (string newTabName in news)
+					InsertTabItem(null, tabItems, newTabName);
+			}
+		}
+
+		private void RefreshUser(bool useSearch, params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			Main.WorkerFactory((s, e) => {
+				foreach (Status entry in
+						useSearch ?
+						Search.Execute(Format.Atom, options) :
+						Statuses.UserTimeline(Format.Xml, options)) {
+					InsertTabItem(entry, UserTabItems, entry.User.ScreenName);
+				}
+			}, true).RunWorkerAsync();
+		}
+
+		private void RefreshQuery(params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			Main.WorkerFactory((s, e) => {
+				string qWord = Search.GetQWord(options);
+				if (qWord != null) {
+					foreach (Status entry in Search.Execute(Format.Atom, options)) {
+						InsertTabItem(entry, QueryTabItems, qWord);
+					}
+				}
+			}, true).RunWorkerAsync();
+		}
+
+		private void RefreshTrend(bool updateList, params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			var optionList = options.ToList();
+			string woeid = null;
+			string qWord = null;
+			foreach (string value in optionList) {
+				int woeidIndex = value.IndexOf("woeid=");
+				if (woeidIndex != -1) {
+					woeid = value.Substring("woeid=".Length);
+				}
+				int wordIndex = value.IndexOf("q=");
+				if (wordIndex != -1) {
+					qWord = value.Substring("q=".Length);
+				}
+			}
+
+			Main.WorkerFactory((s, e) => {
+				optionList.Add("lang=ja");
+				if (woeid == null) {
+					foreach (var entry in Search.Execute(Format.Atom, optionList.ToArray())) {
+						InsertTabItem(entry, TrendTabItems, qWord);
+					}
+				} else {
+					string[] trendWords;
+
+					optionList.Remove("woeid=" + woeid);
+					if (updateList) {
+						MatchingTrends trends = Trends.Woeid(Format.Json, woeid);
+						trendWords = trends.Hotwords;
+						if (trendWords != null) {
+							ArrangeTabItems(OldTrendWords, trendWords, TrendTabItems);
+							foreach (string keyword in trendWords) {
+								InsertTabItem(null, TrendTabItems, keyword);
+							}
+						}
+					} else {
+						trendWords = OldTrendWords;
+					}
+
+					if (trendWords != null) {
+						optionList.Add("lang=ja");
+						optionList.Add("q=" + Search.FormatQ(trendWords));
+						foreach (Status entry in Search.Execute(Format.Atom, optionList.ToArray())) {
+							foreach (string keyword in trendWords) {
+								if (entry.Text.Relates(keyword)) {
+									InsertTabItem(entry, TrendTabItems, keyword);
+									break;
+								}
+							}
+						}
+						OldTrendWords = trendWords;
+					}
+				}
+			}, true).RunWorkerAsync();
+		}
+
+		private void RefreshBuzztter(bool updateList, params string[] options) {
+			if (options == null) {
+				return;
+			}
+
+			string qWord = null;
+			if (options != null) {
+				string searchWord = "q=";
+				foreach (string option in options) {
+					int index = option.IndexOf(searchWord);
+					if (index != -1) {
+						qWord = option.Substring(index + searchWord.Length);
+						break;
+					}
+				}
+			}
+
+			Main.WorkerFactory((s, e) => {
+				if (qWord == null) {
+					string[] hotwords;
+
+					if (updateList) {
+						hotwords = BuzztterFeed.GetFeed();
+						if (hotwords != null) {
+							ArrangeTabItems(OldBuzztterWords, hotwords, BuzztterTabItems);
+							foreach (string keyword in hotwords) {
+								InsertTabItem(null, BuzztterTabItems, keyword);
+							}
+						}
+					} else {
+						hotwords = OldBuzztterWords;
+					}
+
+					if (hotwords != null) {
+						var optionList = options.ToList();
+						optionList.Add("q=" + Search.FormatQ(hotwords));
+						foreach (Status entry in Search.Execute(Format.Atom, optionList.ToArray())) {
+							foreach (string keyword in hotwords) {
+								if (entry.Text.Relates(keyword)) {
+									InsertTabItem(entry, BuzztterTabItems, keyword);
+									break;
+								}
+							}
+						}
+						OldBuzztterWords = hotwords;
+					}
+				} else {
+					foreach (var entry in Search.Execute(Format.Atom, options)) {
+						InsertTabItem(entry, BuzztterTabItems, qWord);
+					}
+				}
+			}, true).RunWorkerAsync();
+		}
+
+		public void RefreshMASearch(bool isOR, Status status, params string[] options) {
+			const string appid = "tQ4GsN6xg678mGX4kKDUToaS9MuMfGd98P5lQLC459EIHzc225hSthjWnhJjlZOX";
+
+			Main.WorkerFactory((s, e) => {
+				var list = new List<string>();
+
+				var sb = new StringBuilder();
+				foreach (StatusText t in status.TextParser.ParsedText) {
+					if (t.Type == StatusTextType.Normal) {
+						sb.Append(t.Text);
+					} else if (t.Type == StatusTextType.Hashtag) {
+						if (!list.Contains(t.Text)) {
+							list.Add(t.Text);
+						}
+					}
+				}
+				ResultSet result = MAService.Parse(appid, sb.ToString(), "ma");
+				foreach (Word word in result.MAResult.WordList) {
+					if (word.Pos == "名詞" && word.Surface != "RT") {
+						if (!list.Contains(word.Surface)) {
+							list.Add(word.Surface);
+						}
+					}
+				}
+
+
+				var query = isOR ? Search.FormatQ(list.ToArray()) : Search.FormatQByAnd(list.ToArray());
+				RefreshMASearch(true, query, options);
+			}, true).RunWorkerAsync();
+		}
+
+		public void RefreshMASearch(bool updateList, string q, params string[] options) {
+			Main.WorkerFactory((s, e) => {
+				Dispatch.Method(() => {
+					var first = MASearchTabItems[0];
+					var statuses = first.DataContext as OrderedHashSet<Status>;
+
+					if (!string.IsNullOrEmpty(q)) {
+						try {
+							first.Header = q;
+							var list = new List<string>(options);
+							list.Add("q=" + q);
+							var result = Search.Execute(Format.Atom, list.ToArray());
+							if (updateList && result.Count() > 0) {
+								statuses.Clear();
+							}
+							statuses.InsertRange(result);
+						} catch {
+							// do nothing
+						}
+					}
+				});
+			}, true).RunWorkerAsync();
+		}
+		#endregion
+
+		#region Command
+		public void Refresh(object sender, ExecutedRoutedEventArgs e) {
+			if (SelectedTabItem != null && SelectedTabItem.Content is TabControl) {
+				var tabControl = SelectedTabItem.Content as TabControl;
+				string childHeader = null;
+				if (tabControl.SelectedItem is TabItem) {
+					childHeader = (tabControl.SelectedItem as TabItem).Header.ToString();
+				}
+				var source = tabControl.ItemsSource as ObservableCollection<TabItem>;
+
+				var options = new List<string>();
+				var kv = e.Parameter as Dictionary<UpdateType, Status>;
+				if (kv == null) {
+					// クリア更新
+					var twitterDataGrid = tabControl.SelectedContent as TwitterDataGrid;
+					if (twitterDataGrid != null) {
+						var dataContent = twitterDataGrid.DataContext as OrderedHashSet<Status>;
+						dataContent.Clear();
+					}
+				} else {
+					if (kv.ContainsKey(UpdateType.Forward)) {
+						options.Add("since_id=" + kv[UpdateType.Forward].Id);
+					} else if (kv.ContainsKey(UpdateType.Prev)) {
+						options.Add("max_id=" + kv[UpdateType.Prev].Id);
+					}
+				}
+
+				if (source == QueryTabItems || source == MASearchTabItems || source == TrendTabItems || source == BuzztterTabItems) {
+					options.Add("rpp=100");
+				}
+
+				if (source == UserTabItems) {
+					if (string.IsNullOrEmpty(Configuration.TimelineScreenName)) {
+						return;
+					}
+
+					bool useSearch = childHeader == "All";
+					if (useSearch) {
+						var fromList = new List<string>();
+						foreach (string screenName in Configuration.TimelineScreenName.SplitByLineOrComma()) {
+							fromList.Add("from:" + screenName);
+						}
+						options.Add("q=" + Search.FormatQ(fromList.ToArray()));
+						options.Add("rpp=100");
+					} else {
+						options.AddRange(new string[] { "include_rts=1", "count=100" });
+						options.Add("screen_name=" + childHeader);
+					}
+
+					RefreshUser(useSearch, options.ToArray());
+				} else if (source == QueryTabItems) {
+					if (string.IsNullOrEmpty(Configuration.SearchQuery) || childHeader == null) {
+						return;
+					}
+
+					if (childHeader == "All") {
+						foreach (string keyword in Configuration.SearchQuery.SplitByLineOrComma()) {
+							options.Add("q=" + keyword);
+							RefreshQuery(options.ToArray());
+							options.Remove("q=" + keyword);
+						}
+					} else {
+						options.Add("q=" + childHeader);
+						RefreshQuery(options.ToArray());
+					}
+				} else if (source == MASearchTabItems) {
+					options.Add("lang=ja");
+					RefreshMASearch(false, MASearchTabItems[0].Header.ToString(), options.ToArray());
+				} else if (source == TrendTabItems) {
+					if (childHeader == "All") {
+						options.Add("woeid=23424856"); // 23424856:日本
+					} else {
+						options.Add("q=" + childHeader);
+					}
+
+					RefreshTrend(childHeader == "All" && e.Parameter == null, options.ToArray());
+				} else if (source == BuzztterTabItems) {
+					options.Add("lang=ja");
+					if (childHeader != "All") {
+						options.Add("q=" + childHeader);
+					}
+
+					RefreshBuzztter(childHeader == "All" && e.Parameter == null, options.ToArray());
+				}
+			}
+		}
+		#endregion
+
+	}
+
+}
